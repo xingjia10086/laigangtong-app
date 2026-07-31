@@ -1,0 +1,155 @@
+[
+  {
+    "id": "mtr-mobile",
+    "name": "MTR Mobile",
+    "category": "交通出行",
+    "oneLiner": "港鐵官方 App，查看路線圖、班次與轉乘資訊。",
+    "whyNeeded": "港鐵是香港最主要的市內交通工具，這個官方 App 可以查看路線圖、班次、車費與轉乘資訊，還有即時的服務通告，剛到香港搭地鐵基本都靠它。",
+    "tags": ["交通", "地鐵", "官方"],
+    "appStoreId": "369295276"
+  },
+  {
+    "id": "kmb-app1933",
+    "name": "App1933 - KMB‧LWB",
+    "category": "交通出行",
+    "oneLiner": "九巴官方 App，查看巴士到站時間。",
+    "whyNeeded": "九巴（KMB）覆蓋九龍、新界大部分巴士路線，這個 App 可以即時查看巴士到站時間、路線與轉乘資訊，不用在站頭乾等。",
+    "tags": ["交通", "巴士", "官方"],
+    "appStoreId": "1170003707"
+  },
+  {
+    "id": "citybus",
+    "name": "城巴 Citybus",
+    "category": "交通出行",
+    "oneLiner": "城巴官方 App，港島區巴士必備。",
+    "whyNeeded": "城巴主要行走港島與機場路線，這個官方 App 可以查看巴士到站時間與路線，配合九巴 App 就能覆蓋香港大部分巴士服務。",
+    "tags": ["交通", "巴士", "官方"],
+    "appStoreId": "472242340"
+  },
+  {
+    "id": "octopus",
+    "name": "Octopus 八達通",
+    "category": "交通出行",
+    "oneLiner": "八達通官方 App，增值與管理必備。",
+    "whyNeeded": "八達通是香港最通用的交通與小額支付工具，搭車、便利店、快餐店都用得到。這個 App 可以用 Apple Pay 增值、查看餘額紀錄，不用每次都去便利店增值。",
+    "tags": ["交通", "支付", "官方"],
+    "appStoreId": "1114430602"
+  },
+  {
+    "id": "openrice",
+    "name": "OpenRice",
+    "category": "飲食外賣",
+    "oneLiner": "香港最多人使用的餐廳搜尋與評論平台。",
+    "whyNeeded": "不熟悉附近有什麼吃的時候，OpenRice 有齊餐廳評分、菜單、優惠與訂座功能，是香港人找吃的第一站，也是新來港人士最快找到合口味餐廳的方法。",
+    "tags": ["飲食", "餐廳", "評論"],
+    "appStoreId": "310663323"
+  },
+  {
+    "id": "foodpanda",
+    "name": "foodpanda",
+    "category": "飲食外賣",
+    "oneLiner": "外賣與雜貨速遞平台。",
+    "whyNeeded": "不想出門或者還未熟悉附近環境的時候，foodpanda 可以送餐與日用雜貨上門，是初到香港安頓期間最方便的選擇之一。",
+    "tags": ["外賣", "速遞"],
+    "appStoreId": "758103884"
+  },
+  {
+    "id": "hktvmall",
+    "name": "HKTVmall",
+    "category": "飲食外賣",
+    "oneLiner": "本地大型網購平台，日用品與超市貨品齊備。",
+    "whyNeeded": "HKTVmall 涵蓋超市貨品、日用百貨與家電，送貨快、選擇多，在還未熟悉附近街市與超市位置之前，是採購日常用品最穩妥的方法。",
+    "tags": ["網購", "超市"],
+    "appStoreId": "910398738"
+  },
+  {
+    "id": "spacious",
+    "name": "千居 Spacious",
+    "category": "住屋家居",
+    "oneLiner": "找樓租樓平台，瀏覽盤源與儲存心儀單位。",
+    "whyNeeded": "初到香港找樓租樓，這個 App 可以按地區、價錢、間隔篩選單位，儲存心儀盤源與接收新盤通知，幫助快速掌握市場行情。",
+    "tags": ["租屋", "找樓"],
+    "appStoreId": "889041542"
+  },
+  {
+    "id": "28hse",
+    "name": "28Hse 香港屋網",
+    "category": "住屋家居",
+    "oneLiner": "另一個常用找樓平台，盤源多元。",
+    "whyNeeded": "與千居互補使用，28Hse 盤源覆蓋面廣，還有按揭計算機，方便新來港人士比較不同地區的租金水平與交通配套。",
+    "tags": ["租屋", "找樓"],
+    "appStoreId": "902344223"
+  },
+  {
+    "id": "iam-smart",
+    "name": "智方便 iAM Smart",
+    "category": "政府服務",
+    "oneLiner": "香港政府數碼身份，一戶通辦多項政府服務。",
+    "whyNeeded": "11 歲以上香港身份證持有人都可以免費登記，用來登入不同政府部門與機構的網上服務、自動填表與電子簽署，是辦理政府手續的核心工具。",
+    "tags": ["政府", "數碼身份", "官方"],
+    "appStoreId": "1515065344"
+  },
+  {
+    "id": "ha-go",
+    "name": "HA Go",
+    "category": "政府服務",
+    "oneLiner": "醫院管理局官方 App，預約覆診與查看病歷。",
+    "whyNeeded": "在公立醫院與診所看病的新來港人士，可以用這個 App 預約專科覆診、繳費、查看檢查結果與用藥資訊，不用親身排隊處理這些手續。",
+    "tags": ["政府", "醫療", "官方"],
+    "appStoreId": "1469340861"
+  },
+  {
+    "id": "govhk-notifications",
+    "name": "GovHK Notifications",
+    "category": "政府服務",
+    "oneLiner": "香港政府官方通知與資訊推送。",
+    "whyNeeded": "接收政府最新公告，例如天氣警告、公共服務調整與政策資訊，幫助新來港人士第一時間掌握與日常生活相關的官方消息。",
+    "tags": ["政府", "官方", "資訊"],
+    "appStoreId": "526658535"
+  },
+  {
+    "id": "payme",
+    "name": "PayMe by HSBC",
+    "category": "銀行支付",
+    "oneLiner": "個人轉賬與收付款電子錢包。",
+    "whyNeeded": "香港朋友、同事、業主之間交收租金按金很多時候會用 PayMe 或轉數快，即使還未開實體銀行戶口，PayMe 也可以用來即時轉賬，是本地社交與生活常用的支付方式。",
+    "tags": ["支付", "電子錢包"],
+    "appStoreId": "1184264977"
+  },
+  {
+    "id": "alipayhk",
+    "name": "AlipayHK",
+    "category": "銀行支付",
+    "oneLiner": "本地電子錢包，商戶優惠與轉數快。",
+    "whyNeeded": "AlipayHK 在茶餐廳、便利店、街市都可以用來付款，還支援轉數快 FPS 轉賬，是熟悉支付寶操作邏輯的內地朋友最容易上手的本地錢包之一。",
+    "tags": ["支付", "電子錢包"],
+    "appStoreId": "1210638245"
+  },
+  {
+    "id": "csl",
+    "name": "csl.",
+    "category": "通訊辦卡",
+    "oneLiner": "本地電訊商官方 App，管理手機月費與數據。",
+    "whyNeeded": "剛辦了 csl 電話卡的話，用這個 App 可以查看數據用量、繳交月費與處理 5G 漫遊，不用親身去門市。",
+    "tags": ["電訊", "SIM卡", "官方"],
+    "appStoreId": "433378614"
+  },
+  {
+    "id": "my-hkt",
+    "name": "My HKT",
+    "category": "通訊辦卡",
+    "oneLiner": "HKT 旗下電訊、上網、家居服務統一管理。",
+    "whyNeeded": "如果家裡裝了 NETVIGATOR 上網或用著 1O1O 電話卡，這個 App 可以用一個帳戶管理所有 HKT 服務，方便新來港家庭處理寬頻與電話繳費。",
+    "tags": ["電訊", "寬頻", "官方"],
+    "appStoreId": "664964247"
+  },
+  {
+    "id": "wechat",
+    "name": "WeChat",
+    "category": "通訊辦卡",
+    "oneLiner": "與內地親友聯繫的常用通訊軟件，內建 WeChat Pay。",
+    "whyNeeded": "與內地的家人朋友保持聯絡最常用的通訊工具，同時內建 WeChat Pay HK，可以在支援的商戶直接掃碼付款，銜接內地的生活習慣。",
+    "tags": ["通訊", "支付"],
+    "appStoreId": "414478124"
+  }
+]
