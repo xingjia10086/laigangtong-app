@@ -25,6 +25,10 @@ targets:
       path: Sources/App/Info.plist
       properties:
         CFBundleDisplayName: 來港通
+        CFBundleName: 來港通
+        # actool only writes this inside CFBundleIcons; the App Store rejects
+        # uploads that lack it at the top level.
+        CFBundleIconName: AppIcon
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "2"
         CFBundleDevelopmentRegion: zh-Hant
