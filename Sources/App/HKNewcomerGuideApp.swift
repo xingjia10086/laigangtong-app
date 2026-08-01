@@ -4,7 +4,7 @@ import SwiftUI
 struct HKNewcomerGuideApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }

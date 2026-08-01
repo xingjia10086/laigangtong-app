@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var store = GuideStore()
+    @ObservedObject var store: GuideStore
 
     var body: some View {
         NavigationStack {
@@ -17,7 +17,7 @@ struct ContentView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("港來通")
+            .navigationTitle("全部指南")
             .searchable(text: $store.searchText, prompt: "搜尋 App 或分類")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -41,5 +41,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(store: GuideStore())
 }

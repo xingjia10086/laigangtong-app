@@ -1,0 +1,132 @@
+[
+  {
+    "id": "talent",
+    "name": "人才計劃",
+    "subtitle": "高才通 · 優才",
+    "symbol": "star.circle.fill",
+    "summary": "簽證批了、人剛落地，但工作與住處都還未定。頭一個月要同時處理身份證、銀行戶口與搵工三件事，而且很多手續互為前置——沒有身份證開不了戶，沒有住址證明銀行又會卡你。",
+    "steps": [
+      "落地 30 天內預約辦香港身份證，逾期會有麻煩",
+      "先開一個全程手機辦理的虛擬銀行戶口過渡，不必等實體分行預約",
+      "辦一張本地電話卡，銀行與政府服務都要本地號碼收驗證碼",
+      "登記智方便，之後報稅、續簽、政府表格都靠它",
+      "搵工同時開始睇樓，租約通常要求在職證明"
+    ],
+    "essentialAppIds": [
+      "immd",
+      "za-bank",
+      "csl",
+      "iam-smart",
+      "jobsdb",
+      "spacious",
+      "octopus",
+      "whatsapp",
+      "google-maps",
+      "myobservatory"
+    ]
+  },
+  {
+    "id": "employed",
+    "name": "專才就業",
+    "subtitle": "已有僱主 · 受聘來港",
+    "symbol": "briefcase.circle.fill",
+    "summary": "工作已經定了，公司通常會協助處理簽證，所以重點不在搵工，而在盡快把生活安頓下來：租住、通勤、開戶出糧、交水電煤。這一批人最常低估的是繳費流程與通勤時間。",
+    "steps": [
+      "辦香港身份證，公司出糧與強積金都要用",
+      "開實體銀行戶口，出糧戶口一般要求實體行",
+      "睇樓時先用地圖確認返工通勤時間，港島與新界差距很大",
+      "簽租約後立即登記水、電、煤與寬頻，都要幾天才開通",
+      "設定繳費靈，之後差餉、管理費、水電煤都在這裡交"
+    ],
+    "essentialAppIds": [
+      "immd",
+      "hsbc-hk",
+      "spacious",
+      "citymapper",
+      "mtr-mobile",
+      "pps",
+      "iam-smart",
+      "whatsapp",
+      "octopus",
+      "myobservatory"
+    ]
+  },
+  {
+    "id": "dependant",
+    "name": "隨行家庭",
+    "subtitle": "受養人 · 帶小朋友",
+    "symbol": "figure.2.and.child.holdinghands",
+    "summary": "配偶或子女隨行來港，自己未必即時要上班，重心在小朋友入學、一家人的醫療登記，以及每日買餸持家。香港物價高，慳錢工具對這一組的實際影響最大。",
+    "steps": [
+      "全家辦香港身份證，小朋友報學校要用",
+      "小朋友入學後安裝學校指定的家校 App，電子通告要家長簽署",
+      "登記醫健通，報學校要交疫苗紀錄時不必跑醫院取紙本",
+      "裝好超市積分 App，惠康系與百佳系要各裝一個才比到價",
+      "辦公共圖書館證，免費借書與電子書，親子活動也在這裡報名"
+    ],
+    "essentialAppIds": [
+      "immd",
+      "eclass-parent",
+      "ehealth",
+      "ha-go",
+      "yuu",
+      "moneyback",
+      "hktvmall",
+      "hk-libraries",
+      "whatsapp",
+      "myobservatory"
+    ]
+  },
+  {
+    "id": "student",
+    "name": "非本地學生",
+    "subtitle": "來港升學 · IANG",
+    "symbol": "graduationcap.circle.fill",
+    "summary": "預算緊、又要熟悉校園以外的香港。交通與伙食是最大兩筆開支，二手市場與學生優惠能省下不少。畢業後想留港工作的話，兼職與實習經驗會直接影響 IANG 之後的求職。",
+    "steps": [
+      "辦香港身份證，學生簽證同樣要辦",
+      "辦學生八達通，車費有折扣，日常搭車食飯都用它",
+      "宿舍或租房安頓後，用二手平台買家具電器，畢業時再賣出",
+      "辦公共圖書館證，自修室與電子資源都免費",
+      "想做兼職先確認簽證條件，非本地學生的工作時數有限制"
+    ],
+    "essentialAppIds": [
+      "immd",
+      "octopus",
+      "mtr-mobile",
+      "citymapper",
+      "carousell",
+      "hk-libraries",
+      "moovup",
+      "yuu",
+      "whatsapp",
+      "myobservatory"
+    ]
+  },
+  {
+    "id": "settle",
+    "name": "定居團聚",
+    "subtitle": "單程證 · 家庭團聚",
+    "symbol": "house.circle.fill",
+    "summary": "來港定居而非短期逗留，通常要盡快搵到工作、安排小朋友入學，並了解可以申請的政府服務。粵語與本地手續是最大門檻，官方 App 能省下很多來回跑部門的時間。",
+    "steps": [
+      "辦香港身份證，之後所有政府服務都以它為憑",
+      "登記智方便，網上辦手續不必逐個部門開帳號",
+      "小朋友報學校，入學後安裝家校 App",
+      "在公立醫療系統登記，睇醫生與攞藥都在 App 內處理",
+      "搵工可同時用綜合平台與前線工種平台，後者不需要精美履歷"
+    ],
+    "essentialAppIds": [
+      "immd",
+      "iam-smart",
+      "moovup",
+      "jobsdb",
+      "ha-go",
+      "eclass-parent",
+      "yuu",
+      "pps",
+      "whatsapp",
+      "myobservatory"
+    ]
+  }
+]
