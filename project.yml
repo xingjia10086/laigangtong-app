@@ -24,7 +24,7 @@ targets:
     info:
       path: Sources/App/Info.plist
       properties:
-        CFBundleDisplayName: 港來通
+        CFBundleDisplayName: 來港通
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "2"
         CFBundleDevelopmentRegion: zh-Hant

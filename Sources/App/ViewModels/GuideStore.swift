@@ -13,18 +13,23 @@ final class GuideStore: ObservableObject {
     @Published var doneStepKeys: Set<String> {
         didSet { UserDefaults.standard.set(Array(doneStepKeys), forKey: Self.stepsKey) }
     }
+    @Published var selectedTab: Int {
+        didSet { UserDefaults.standard.set(selectedTab, forKey: Self.tabKey) }
+    }
     @Published var searchText: String = ""
     @Published var selectedCategory: GuideCategory?
 
     private static let favoritesKey = "favoriteEntryIDs"
     private static let personaKey = "selectedPersonaID"
     private static let stepsKey = "doneStepKeys"
+    private static let tabKey = "selectedTab"
 
     init() {
         let defaults = UserDefaults.standard
         favoriteIDs = Set(defaults.stringArray(forKey: Self.favoritesKey) ?? [])
         selectedPersonaID = defaults.string(forKey: Self.personaKey)
         doneStepKeys = Set(defaults.stringArray(forKey: Self.stepsKey) ?? [])
+        selectedTab = defaults.integer(forKey: Self.tabKey)
         let loadedEntries: [GuideEntry]? = Self.load("apps")
         let loadedPersonas: [Persona]? = Self.load("personas")
         entries = loadedEntries ?? []
