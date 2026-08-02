@@ -2,6 +2,8 @@ default_platform(:ios)
 
 SCHEME = "HKNewcomerGuide"
 PROJECT = "HKNewcomerGuide.xcodeproj"
+APP_ID = "com.mengmusanqian.hknewcomerguide"
+TEAM_ID = "DDDFQ9Z58N"
 
 # The Xcode project is generated from project.yml, so it is not in git.
 # Every lane that touches the project regenerates it first.
@@ -95,6 +97,20 @@ platform :ios do
 
     generate_project
 
+    # project.yml asks for automatic signing, which looks for a development
+    # profile and ignores the App Store profile match just installed. Point the
+    # freshly generated project at that profile instead.
+    profile = ENV.fetch("sigh_#{APP_ID}_appstore_profile-name")
+
+    update_code_signing_settings(
+      path: PROJECT,
+      use_automatic_signing: false,
+      team_id: TEAM_ID,
+      code_sign_identity: "Apple Distribution",
+      profile_name: profile,
+      targets: [SCHEME]
+    )
+
     gym(
       project: PROJECT,
       scheme: SCHEME,
@@ -103,7 +119,10 @@ platform :ios do
       xcargs: "CURRENT_PROJECT_VERSION=#{build}",
       output_directory: "build",
       output_name: "LaiGangTong.ipa",
-      clean: true
+      clean: true,
+      export_options: {
+        provisioningProfiles: { APP_ID => profile }
+      }
     )
 
     pilot(
