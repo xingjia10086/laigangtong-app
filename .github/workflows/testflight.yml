@@ -27,7 +27,6 @@ jobs:
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
       TF_CHANGELOG: ${{ inputs.changelog }}
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_HIDE_CHANGELOG: '1'
@@ -50,6 +49,14 @@ jobs:
 
       - name: Ensure the App Store Connect record exists
         run: bundle exec fastlane create_app
+
+      # match stores signing material in a separate private repo, which the
+      # job-scoped GITHUB_TOKEN cannot reach.
+      - name: Authorise access to the certificate repo
+        run: |
+          git config --global \
+            url."https://x-access-token:${{ secrets.MATCH_GIT_TOKEN }}@github.com/".insteadOf \
+            "https://github.com/"
 
       - name: Build and upload to TestFlight
         run: bundle exec fastlane beta
