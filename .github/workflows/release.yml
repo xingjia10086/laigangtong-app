@@ -1,0 +1,63 @@
+name: App Store
+
+# Deliberately manual. The TestFlight workflow runs on every push; pushing
+# metadata and submitting for review should always be a decision, never a
+# side effect of a commit.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: '要做什麼'
+        required: true
+        default: screenshots_only
+        type: choice
+        options:
+          - screenshots_only      # 只重拍截圖，產出 artifact 供人工過目
+          - metadata_only         # 推送文案與截圖，不提交審核
+          - submit_for_review     # 推送並提交審核
+
+concurrency:
+  group: appstore
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: macos-26
+    timeout-minutes: 90
+
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      FASTLANE_SKIP_UPDATE_CHECK: '1'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install Pillow
+        run: python3 -m pip install --break-system-packages --quiet Pillow
+
+      - name: Regenerate screenshots on the latest iOS simulator
+        run: bash scripts/screenshots.sh
+
+      - name: Publish screenshots for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: fastlane/screenshots/zh-Hant/*.png
+
+      - name: Push metadata and screenshots
+        if: inputs.action == 'metadata_only'
+        run: bundle exec fastlane metadata_only
+
+      - name: Push metadata and submit for review
+        if: inputs.action == 'submit_for_review'
+        run: bundle exec fastlane release

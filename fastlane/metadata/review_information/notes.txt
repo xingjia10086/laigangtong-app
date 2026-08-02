@@ -1,0 +1,51 @@
+Thank you for reviewing 來港通 (LaiGangTong).
+
+WHAT THE APP IS
+A Traditional Chinese reference guide for people who have just moved to
+Hong Kong. It helps them work out which apps they need and in what order
+to handle arrival tasks.
+
+NO ACCOUNT NEEDED
+There is no sign-in, registration, or paywall. All features are available
+immediately on launch. No demo account is required.
+
+WORKS FULLY OFFLINE
+All content is bundled inside the app. Browsing, searching, saving
+favourites, choosing a profile, and ticking off checklist items all work
+with no network connection.
+
+ORIGINAL EDITORIAL CONTENT (re: Guideline 4.2)
+This is not a collection of links or a repackaged website. The app
+contains original written guidance produced specifically for this app:
+
+- For each of the 40 entries we wrote an explanation of why a newcomer to
+  Hong Kong specifically needs it, including practical details that are
+  not on the App Store listing (for example: PPS requires an in-person
+  first-time registration at a convenience store terminal; Hong Kong's
+  two supermarket loyalty schemes are split across rival chains so you
+  need both to compare prices).
+- Five arrival profiles (talent scheme, employment visa, dependant,
+  non-local student, one-way permit) each carry an original ordered
+  to-do list explaining task dependencies - for example that you cannot
+  open most bank accounts before receiving your HKID, which is why a
+  mobile-only virtual bank is suggested as a bridge.
+- Checklist progress and favourites are stored locally and persist.
+- Every App Store link was manually verified against the Hong Kong
+  storefront. Apps that have shut down (HKTaxi, which ceased service in
+  April 2025, and Deliveroo, which exited Hong Kong) were deliberately
+  excluded even though many published guides still recommend them.
+
+NO AFFILIATION CLAIMED
+The app references government and commercial services by name only, for
+identification. It uses no third-party logos, icons, or trademarks. The
+app description, the in-app content, the support page, and the privacy
+policy all state explicitly that it is independent and not affiliated
+with or endorsed by the Hong Kong SAR Government or any organisation
+mentioned. The icon deliberately avoids the bauhinia emblem for the same
+reason.
+
+PRIVACY
+No data of any kind is collected, transmitted, or shared. There are no
+analytics, no advertising, and no third-party SDKs.
+
+Contact: hi@mengmusanqian.com.cn

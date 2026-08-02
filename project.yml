@@ -29,8 +29,8 @@ targets:
         # actool only writes this inside CFBundleIcons; the App Store rejects
         # uploads that lack it at the top level.
         CFBundleIconName: AppIcon
-        CFBundleShortVersionString: "1.0"
-        CFBundleVersion: "2"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         CFBundleDevelopmentRegion: zh-Hant
         CFBundleLocalizations: [zh-Hant]
         UILaunchScreen: {}
@@ -50,10 +50,6 @@ targets:
         CURRENT_PROJECT_VERSION: "2"
         SUPPORTS_MACCATALYST: false
         ENABLE_PREVIEWS: true
-        # The device runs a much newer iOS than this Xcode's SDK. Xcode's Debug
-        # "debug dylib" split leaves a stub executable that fails to load the
-        # dylib there and launches to a black screen, so build one binary.
-        ENABLE_DEBUG_DYLIB: NO
 schemes:
   HKNewcomerGuide:
     build:

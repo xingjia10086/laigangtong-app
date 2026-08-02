@@ -1,0 +1,4 @@
+git_url("https://github.com/xingjia10086/laigangtong-certs")
+storage_mode("git")
+type("appstore")
+app_identifier(["com.mengmusanqian.hknewcomerguide"])

@@ -6,3 +6,13 @@ build/
 xcuserdata/
 *.xcuserstate
 config/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output/
+*.ipa
+*.dSYM.zip
+*.mobileprovision
+*.p8
+*.p12
