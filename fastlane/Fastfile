@@ -9,13 +9,44 @@ def generate_project
   sh("cd .. && xcodegen generate")
 end
 
+require "base64"
+require "openssl"
+
+# Accepts the .p8 however it was pasted into the secret: real PEM, PEM with
+# Windows line endings, PEM flattened with literal \n, or base64 of any of
+# those. OpenSSL rejects all but the first with "invalid curve name".
+def p8_content
+  raw = ENV.fetch("ASC_KEY_P8").dup
+  raw = Base64.decode64(raw) unless raw.include?("BEGIN PRIVATE KEY")
+  raw.gsub("\r\n", "\n").gsub("\r", "\n").gsub('\n', "\n").strip + "\n"
+end
+
 def asc_api_key
   app_store_connect_api_key(
     key_id: ENV.fetch("ASC_KEY_ID"),
     issuer_id: ENV.fetch("ASC_ISSUER_ID"),
-    key_content: ENV.fetch("ASC_KEY_P8"),
+    key_content: p8_content,
     in_house: false
   )
+end
+
+platform :ios do
+  desc "Check the API key parses, without revealing it"
+  lane :check_key do
+    key = p8_content
+    UI.message("length: #{key.length}")
+    UI.message("lines: #{key.lines.count}")
+    UI.message("first line: #{key.lines.first.to_s.strip}")
+    UI.message("last line: #{key.lines.last.to_s.strip}")
+    UI.message("key_id length: #{ENV.fetch('ASC_KEY_ID').strip.length} (expected 10)")
+    UI.message("issuer_id length: #{ENV.fetch('ASC_ISSUER_ID').strip.length} (expected 36)")
+    begin
+      OpenSSL::PKey::EC.new(key)
+      UI.success("OpenSSL parsed the key")
+    rescue => e
+      UI.user_error!("OpenSSL rejected the key: #{e.message}")
+    end
+  end
 end
 
 platform :ios do

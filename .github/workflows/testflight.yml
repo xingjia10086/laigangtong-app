@@ -47,6 +47,9 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
 
+      - name: Validate the App Store Connect key
+        run: bundle exec fastlane check_key
+
       - name: Ensure the App Store Connect record exists
         run: bundle exec fastlane create_app
 
