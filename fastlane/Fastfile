@@ -24,9 +24,22 @@ def p8_content
 end
 
 def asc_api_key
+  key_id = ENV.fetch("ASC_KEY_ID").strip
+  issuer_id = ENV.fetch("ASC_ISSUER_ID").strip
+
+  # app_store_connect_api_key hands the key to fastlane's own REST calls
+  # (match, produce, latest_testflight_build_number - all of which have
+  # worked). pilot's binary upload shells out to the separate `altool`
+  # binary, though, which only reads keys from disk, and this action does
+  # not write one there - so it fails past that point with a misleading
+  # "file isn't in the correct format" instead of a key-not-found error.
+  dir = File.expand_path("~/.appstoreconnect/private_keys")
+  FileUtils.mkdir_p(dir)
+  File.write(File.join(dir, "AuthKey_#{key_id}.p8"), p8_content)
+
   app_store_connect_api_key(
-    key_id: ENV.fetch("ASC_KEY_ID"),
-    issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+    key_id: key_id,
+    issuer_id: issuer_id,
     key_content: p8_content,
     in_house: false
   )
@@ -127,14 +140,6 @@ platform :ios do
 
     ipa = lane_context[SharedValues::IPA_OUTPUT_PATH]
     UI.message("ipa: #{ipa} (#{File.exist?(ipa.to_s) ? File.size(ipa) : 'missing'} bytes)")
-
-    # altool's "isn't in the correct format" (259) is a local zip-structure
-    # check, not an auth error - but it gave no detail on what it didn't like.
-    # `file` and `unzip -t/-l` say whether the zip itself is sound and what's
-    # actually inside before blaming altool further.
-    sh("file '#{ipa}'")
-    sh("unzip -t '#{ipa}'")
-    sh("unzip -l '#{ipa}'")
 
     # Take the path gym reports rather than reconstructing it: a hardcoded
     # relative path resolved to a file altool could not read.
