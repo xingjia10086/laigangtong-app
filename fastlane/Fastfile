@@ -82,7 +82,10 @@ platform :ios do
     setup_ci if ENV["CI"]
     key = asc_api_key
 
-    match(api_key: key, type: "appstore", readonly: ENV["CI"] ? true : false)
+    # Not readonly: the storage repo starts empty, so the first run has to
+    # create the certificate. match reuses whatever is already stored, so this
+    # stays idempotent and will not burn through the 3-certificate limit.
+    match(api_key: key, type: "appstore", readonly: false)
 
     build = latest_testflight_build_number(
       api_key: key,
