@@ -36,7 +36,19 @@ def asc_api_key
   # "file isn't in the correct format" instead of a key-not-found error.
   dir = File.expand_path("~/.appstoreconnect/private_keys")
   FileUtils.mkdir_p(dir)
-  File.write(File.join(dir, "AuthKey_#{key_id}.p8"), p8_content)
+  content = p8_content
+  File.write(File.join(dir, "AuthKey_#{key_id}.p8"), content)
+
+  # A real Apple .p8 is ~230-250 bytes: a header line, 2-3 base64 body lines,
+  # a footer line. 151 bytes written in an earlier run is too short for
+  # that shape - print line lengths (not content) to see if it's truncated.
+  UI.message("p8 written: #{content.bytesize} bytes, line lengths: #{content.lines.map { |l| l.strip.length }}")
+  begin
+    OpenSSL::PKey::EC.new(content)
+    UI.message("p8: OpenSSL parses it as a valid EC key")
+  rescue => e
+    UI.important("p8: OpenSSL could NOT parse it (#{e.message}) - the secret is likely truncated or malformed")
+  end
 
   app_store_connect_api_key(
     key_id: key_id,
