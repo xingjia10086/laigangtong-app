@@ -128,6 +128,14 @@ platform :ios do
     ipa = lane_context[SharedValues::IPA_OUTPUT_PATH]
     UI.message("ipa: #{ipa} (#{File.exist?(ipa.to_s) ? File.size(ipa) : 'missing'} bytes)")
 
+    # altool's "isn't in the correct format" (259) is a local zip-structure
+    # check, not an auth error - but it gave no detail on what it didn't like.
+    # `file` and `unzip -t/-l` say whether the zip itself is sound and what's
+    # actually inside before blaming altool further.
+    sh("file '#{ipa}'")
+    sh("unzip -t '#{ipa}'")
+    sh("unzip -l '#{ipa}'")
+
     # Take the path gym reports rather than reconstructing it: a hardcoded
     # relative path resolved to a file altool could not read.
     pilot(
