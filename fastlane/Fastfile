@@ -4,6 +4,7 @@ SCHEME = "HKNewcomerGuide"
 PROJECT = "HKNewcomerGuide.xcodeproj"
 APP_ID = "com.mengmusanqian.hknewcomerguide"
 TEAM_ID = "DDDFQ9Z58N"
+MARKETING_VERSION = "1.0" # keep in sync with project.yml's MARKETING_VERSION
 
 # The Xcode project is generated from project.yml, so it is not in git.
 # Every lane that touches the project regenerates it first.
@@ -96,6 +97,8 @@ platform :ios do
   lane :beta do
     setup_ci if ENV["CI"]
     key = asc_api_key
+    key_id = ENV.fetch("ASC_KEY_ID").strip
+    issuer_id = ENV.fetch("ASC_ISSUER_ID").strip
 
     # Not readonly: the storage repo starts empty, so the first run has to
     # create the certificate. match reuses whatever is already stored, so this
@@ -141,14 +144,23 @@ platform :ios do
     ipa = lane_context[SharedValues::IPA_OUTPUT_PATH]
     UI.message("ipa: #{ipa} (#{File.exist?(ipa.to_s) ? File.size(ipa) : 'missing'} bytes)")
 
-    # Take the path gym reports rather than reconstructing it: a hardcoded
-    # relative path resolved to a file altool could not read.
-    pilot(
-      api_key: key,
-      ipa: ipa,
-      skip_waiting_for_build_processing: true,
-      distribute_external: false,
-      changelog: ENV["TF_CHANGELOG"] || "內部測試版本。"
+    # pilot's binary upload shells out to altool's deprecated `--upload-app`,
+    # which multiple open fastlane issues report as unreliable on Xcode 26 -
+    # ours failed instantly with a misleading "isn't in the correct format"
+    # that turned out to have nothing to do with the ipa (confirmed sound by
+    # unzip -t in an earlier run). Apple's replacement, `--upload-package`,
+    # does not go through pilot at all, so call it directly.
+    app_numeric_id = Spaceship::ConnectAPI::App.find(APP_ID).id
+
+    sh(
+      "xcrun altool --upload-package '#{ipa}'" \
+      " --type ios" \
+      " --apple-id #{app_numeric_id}" \
+      " --bundle-id #{APP_ID}" \
+      " --bundle-version #{build}" \
+      " --bundle-short-version-string #{MARKETING_VERSION}" \
+      " --apiKey #{key_id}" \
+      " --apiIssuer #{issuer_id}"
     )
   end
 
