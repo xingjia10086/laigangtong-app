@@ -50,8 +50,9 @@ jobs:
       - name: Validate the App Store Connect key
         run: bundle exec fastlane check_key
 
-      - name: Ensure the App Store Connect record exists
-        run: bundle exec fastlane create_app
+      # The App Store Connect record is created once by hand: produce still
+      # demands an Apple ID username even when given an API key, and signing in
+      # that way needs 2FA, which is what the API key exists to avoid.
 
       # match stores signing material in a separate private repo, which the
       # job-scoped GITHUB_TOKEN cannot reach.
