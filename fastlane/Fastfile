@@ -15,6 +15,7 @@ end
 require "base64"
 require "openssl"
 require "plist"
+require "digest"
 
 # Accepts the .p8 however it was pasted into the secret: real PEM, PEM with
 # Windows line endings, PEM flattened with literal \n, or base64 of any of
@@ -38,12 +39,20 @@ def asc_api_key
   dir = File.expand_path("~/.appstoreconnect/private_keys")
   FileUtils.mkdir_p(dir)
   content = p8_content
-  File.write(File.join(dir, "AuthKey_#{key_id}.p8"), content)
+  key_path = File.join(dir, "AuthKey_#{key_id}.p8")
+  File.write(key_path, content)
+  File.chmod(0o600, key_path)
 
-  # A real Apple .p8 is ~230-250 bytes: a header line, 2-3 base64 body lines,
-  # a footer line. 151 bytes written in an earlier run is too short for
-  # that shape - print line lengths (not content) to see if it's truncated.
-  UI.message("p8 written: #{content.bytesize} bytes, line lengths: #{content.lines.map { |l| l.strip.length }}")
+  # match/produce/latest_testflight_build_number all sign JWTs with this
+  # exact string via the REST API and all succeed, so the in-memory content
+  # is provably correct - but xcodebuild's own stricter DVTFoundation parser
+  # rejected the file on disk as "keyPathInvalid". Byte-for-byte compare what
+  # got written against what's in memory to see whether the disk round-trip
+  # itself is where something changes.
+  readback = File.read(key_path)
+  UI.message("p8 in-memory: #{content.bytesize} bytes, sha256=#{Digest::SHA256.hexdigest(content)}")
+  UI.message("p8 on-disk:   #{readback.bytesize} bytes, sha256=#{Digest::SHA256.hexdigest(readback)}")
+  UI.message("p8 identical after write+read: #{readback == content}")
   begin
     OpenSSL::PKey::EC.new(content)
     UI.message("p8: OpenSSL parses it as a valid EC key")
