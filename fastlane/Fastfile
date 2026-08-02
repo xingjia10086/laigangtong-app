@@ -14,6 +14,7 @@ end
 
 require "base64"
 require "openssl"
+require "plist"
 
 # Accepts the .p8 however it was pasted into the secret: real PEM, PEM with
 # Windows line endings, PEM flattened with literal \n, or base64 of any of
@@ -139,48 +140,52 @@ platform :ios do
       targets: [SCHEME]
     )
 
+    # Archive only. Both pilot's legacy `--upload-app` and the replacement
+    # `--upload-package` shell out to Xcode 26's `altool`, which multiple open
+    # fastlane issues report as broken there - ours failed instantly with a
+    # misleading "isn't in the correct format" no matter which flag was used,
+    # while the same key content worked fine for every REST-based call
+    # (match, produce, latest_testflight_build_number all succeeded with it,
+    # which rules out a bad key). Skip altool entirely: `xcodebuild
+    # -exportArchive` with destination "upload" is Xcode's own direct-upload
+    # path - the same one Organizer's "Distribute App" button uses - and
+    # never touches altool.
     gym(
       project: PROJECT,
       scheme: SCHEME,
       configuration: "Release",
-      export_method: "app-store",
+      skip_package_ipa: true,
       xcargs: "CURRENT_PROJECT_VERSION=#{build}",
-      output_directory: "build",
-      output_name: "LaiGangTong.ipa",
-      clean: true,
-      export_options: {
-        provisioningProfiles: { APP_ID => profile }
-      }
+      clean: true
     )
 
-    ipa = lane_context[SharedValues::IPA_OUTPUT_PATH]
-    UI.message("ipa: #{ipa} (#{File.exist?(ipa.to_s) ? File.size(ipa) : 'missing'} bytes)")
+    archive = lane_context[SharedValues::XCODEBUILD_ARCHIVE]
+    key_path = File.expand_path("~/.appstoreconnect/private_keys/AuthKey_#{key_id}.p8")
 
-    # pilot's binary upload shells out to altool's deprecated `--upload-app`,
-    # which multiple open fastlane issues report as unreliable on Xcode 26 -
-    # ours failed instantly with a misleading "isn't in the correct format"
-    # that turned out to have nothing to do with the ipa (confirmed sound by
-    # unzip -t in an earlier run). Apple's replacement, `--upload-package`,
-    # does not go through pilot at all, so call it directly.
-    app_numeric_id = Spaceship::ConnectAPI::App.find(APP_ID).id
-
-    # Isolate whether altool's complaint is about auth or about the file: a
-    # command with no file argument at all should never say "isn't in the
-    # correct format" unless that string is really a generic auth failure.
-    keep_going = ->(status) { UI.important("(continuing despite exit #{status.exitstatus} to gather more diagnostics)") }
-
-    sh("ls -la #{File.expand_path('~/.appstoreconnect/private_keys')}", error_callback: keep_going)
-    sh("xcrun altool --list-providers --apiKey #{key_id} --apiIssuer #{issuer_id}", error_callback: keep_going)
+    export_options = {
+      method: "app-store",
+      teamID: TEAM_ID,
+      signingStyle: "manual",
+      provisioningProfiles: { APP_ID => profile },
+      destination: "upload"
+    }
+    # Note: sh() runs with cwd = fastlane/, but plain Ruby File/Dir calls run
+    # with cwd = wherever `fastlane` was invoked from (repo root, since CI
+    # runs `bundle exec fastlane beta` there) - matching how gym's own
+    # `output_directory: "build"` above already resolves to repo-root/build.
+    plist_path = File.expand_path("build/ExportOptions.plist")
+    FileUtils.mkdir_p(File.dirname(plist_path))
+    File.write(plist_path, Plist::Emit.dump(export_options))
 
     sh(
-      "xcrun altool --upload-package '#{ipa}'" \
-      " --type ios" \
-      " --apple-id #{app_numeric_id}" \
-      " --bundle-id #{APP_ID}" \
-      " --bundle-version #{build}" \
-      " --bundle-short-version-string #{MARKETING_VERSION}" \
-      " --apiKey #{key_id}" \
-      " --apiIssuer #{issuer_id}"
+      "xcodebuild -exportArchive" \
+      " -archivePath '#{archive}'" \
+      " -exportOptionsPlist '#{plist_path}'" \
+      " -exportPath '#{File.dirname(plist_path)}'" \
+      " -authenticationKeyPath '#{key_path}'" \
+      " -authenticationKeyID #{key_id}" \
+      " -authenticationKeyIssuerID #{issuer_id}" \
+      " -allowProvisioningUpdates"
     )
   end
 
