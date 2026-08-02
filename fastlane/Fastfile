@@ -152,6 +152,14 @@ platform :ios do
     # does not go through pilot at all, so call it directly.
     app_numeric_id = Spaceship::ConnectAPI::App.find(APP_ID).id
 
+    # Isolate whether altool's complaint is about auth or about the file: a
+    # command with no file argument at all should never say "isn't in the
+    # correct format" unless that string is really a generic auth failure.
+    keep_going = ->(status) { UI.important("(continuing despite exit #{status.exitstatus} to gather more diagnostics)") }
+
+    sh("ls -la #{File.expand_path('~/.appstoreconnect/private_keys')}", error_callback: keep_going)
+    sh("xcrun altool --list-providers --apiKey #{key_id} --apiIssuer #{issuer_id}", error_callback: keep_going)
+
     sh(
       "xcrun altool --upload-package '#{ipa}'" \
       " --type ios" \
