@@ -125,9 +125,14 @@ platform :ios do
       }
     )
 
+    ipa = lane_context[SharedValues::IPA_OUTPUT_PATH]
+    UI.message("ipa: #{ipa} (#{File.exist?(ipa.to_s) ? File.size(ipa) : 'missing'} bytes)")
+
+    # Take the path gym reports rather than reconstructing it: a hardcoded
+    # relative path resolved to a file altool could not read.
     pilot(
       api_key: key,
-      ipa: "build/LaiGangTong.ipa",
+      ipa: ipa,
       skip_waiting_for_build_processing: true,
       distribute_external: false,
       changelog: ENV["TF_CHANGELOG"] || "內部測試版本。"
