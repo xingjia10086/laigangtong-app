@@ -186,6 +186,12 @@ platform :ios do
     FileUtils.mkdir_p(File.dirname(plist_path))
     File.write(plist_path, Plist::Emit.dump(export_options))
 
+    # -allowProvisioningUpdates tells xcodebuild to itself manage
+    # provisioning through the API key, which is unnecessary here (match
+    # already installed a valid cert and profile) and, per a similar report
+    # on Apple's developer forums (thread 742458), is exactly the flag
+    # implicated in -authenticationKeyPath failing with account/keychain
+    # state it doesn't expect. Drop it; only the upload needs authenticating.
     sh(
       "xcodebuild -exportArchive" \
       " -archivePath '#{archive}'" \
@@ -193,8 +199,7 @@ platform :ios do
       " -exportPath '#{File.dirname(plist_path)}'" \
       " -authenticationKeyPath '#{key_path}'" \
       " -authenticationKeyID #{key_id}" \
-      " -authenticationKeyIssuerID #{issuer_id}" \
-      " -allowProvisioningUpdates"
+      " -authenticationKeyIssuerID #{issuer_id}"
     )
   end
 
