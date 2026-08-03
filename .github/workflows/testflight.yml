@@ -62,8 +62,21 @@ jobs:
             url."https://x-access-token:${{ secrets.MATCH_GIT_TOKEN }}@github.com/".insteadOf \
             "https://github.com/"
 
-      - name: Build and upload to TestFlight
+      # Xcode 26.6's CLI upload tools (altool, and xcodebuild -exportArchive
+      # -authenticationKeyPath) are all broken on this runner - see the
+      # comment above the gym call in Fastfile beta for the full trail. This
+      # lane stops at producing a signed ipa; a human uploads it with
+      # Apple's Transporter app, which is unaffected because it isn't
+      # altool-based.
+      - name: Build the signed ipa
         run: bundle exec fastlane beta
+
+      - name: Publish the ipa
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LaiGangTong-ipa
+          path: build/LaiGangTong.ipa
 
       - name: Upload build logs on failure
         if: failure()

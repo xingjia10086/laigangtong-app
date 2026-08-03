@@ -4,7 +4,6 @@ SCHEME = "HKNewcomerGuide"
 PROJECT = "HKNewcomerGuide.xcodeproj"
 APP_ID = "com.mengmusanqian.hknewcomerguide"
 TEAM_ID = "DDDFQ9Z58N"
-MARKETING_VERSION = "1.0" # keep in sync with project.yml's MARKETING_VERSION
 
 # The Xcode project is generated from project.yml, so it is not in git.
 # Every lane that touches the project regenerates it first.
@@ -14,8 +13,6 @@ end
 
 require "base64"
 require "openssl"
-require "plist"
-require "digest"
 
 # Accepts the .p8 however it was pasted into the secret: real PEM, PEM with
 # Windows line endings, PEM flattened with literal \n, or base64 of any of
@@ -27,42 +24,9 @@ def p8_content
 end
 
 def asc_api_key
-  key_id = ENV.fetch("ASC_KEY_ID").strip
-  issuer_id = ENV.fetch("ASC_ISSUER_ID").strip
-
-  # app_store_connect_api_key hands the key to fastlane's own REST calls
-  # (match, produce, latest_testflight_build_number - all of which have
-  # worked). pilot's binary upload shells out to the separate `altool`
-  # binary, though, which only reads keys from disk, and this action does
-  # not write one there - so it fails past that point with a misleading
-  # "file isn't in the correct format" instead of a key-not-found error.
-  dir = File.expand_path("~/.appstoreconnect/private_keys")
-  FileUtils.mkdir_p(dir)
-  content = p8_content
-  key_path = File.join(dir, "AuthKey_#{key_id}.p8")
-  File.write(key_path, content)
-  File.chmod(0o600, key_path)
-
-  # match/produce/latest_testflight_build_number all sign JWTs with this
-  # exact string via the REST API and all succeed, so the in-memory content
-  # is provably correct - but xcodebuild's own stricter DVTFoundation parser
-  # rejected the file on disk as "keyPathInvalid". Byte-for-byte compare what
-  # got written against what's in memory to see whether the disk round-trip
-  # itself is where something changes.
-  readback = File.read(key_path)
-  UI.message("p8 in-memory: #{content.bytesize} bytes, sha256=#{Digest::SHA256.hexdigest(content)}")
-  UI.message("p8 on-disk:   #{readback.bytesize} bytes, sha256=#{Digest::SHA256.hexdigest(readback)}")
-  UI.message("p8 identical after write+read: #{readback == content}")
-  begin
-    OpenSSL::PKey::EC.new(content)
-    UI.message("p8: OpenSSL parses it as a valid EC key")
-  rescue => e
-    UI.important("p8: OpenSSL could NOT parse it (#{e.message}) - the secret is likely truncated or malformed")
-  end
-
   app_store_connect_api_key(
-    key_id: key_id,
-    issuer_id: issuer_id,
+    key_id: ENV.fetch("ASC_KEY_ID").strip,
+    issuer_id: ENV.fetch("ASC_ISSUER_ID").strip,
     key_content: p8_content,
     in_house: false
   )
@@ -119,8 +83,6 @@ platform :ios do
   lane :beta do
     setup_ci if ENV["CI"]
     key = asc_api_key
-    key_id = ENV.fetch("ASC_KEY_ID").strip
-    issuer_id = ENV.fetch("ASC_ISSUER_ID").strip
 
     # Not readonly: the storage repo starts empty, so the first run has to
     # create the certificate. match reuses whatever is already stored, so this
@@ -149,58 +111,40 @@ platform :ios do
       targets: [SCHEME]
     )
 
-    # Archive only. Both pilot's legacy `--upload-app` and the replacement
-    # `--upload-package` shell out to Xcode 26's `altool`, which multiple open
-    # fastlane issues report as broken there - ours failed instantly with a
-    # misleading "isn't in the correct format" no matter which flag was used,
-    # while the same key content worked fine for every REST-based call
-    # (match, produce, latest_testflight_build_number all succeeded with it,
-    # which rules out a bad key). Skip altool entirely: `xcodebuild
-    # -exportArchive` with destination "upload" is Xcode's own direct-upload
-    # path - the same one Organizer's "Distribute App" button uses - and
-    # never touches altool.
+    # Every CLI upload path Xcode 26.6 offers is broken on this runner:
+    # pilot's `--upload-app` and the replacement `--upload-package` both shell
+    # out to `altool`, which multiple open fastlane issues confirm is broken
+    # since Xcode 26 - ours failed instantly with a misleading "isn't in the
+    # correct format" regardless of which flag was used. `xcodebuild
+    # -exportArchive -authenticationKeyPath` (Xcode's own direct-upload path,
+    # the one behind Organizer's "Distribute App" button, which doesn't touch
+    # altool at all) failed too, identically, with or without
+    # -allowProvisioningUpdates: DVTFoundation.JWT.Error.keyPathInvalid. None
+    # of this is about our key - the same key content signs every REST call
+    # in this lane (match, produce, latest_testflight_build_number) fine.
+    #
+    # So: stop fighting Apple's CLI tooling and just produce a normal signed
+    # ipa, the same way this lane did before any of the above was added -
+    # confirmed structurally sound by unzip -t in an earlier run. Upload it
+    # as a workflow artifact; a human finishes the last step with Apple's
+    # Transporter app (drag the ipa in, click Deliver - unaffected by any of
+    # this because it is a different, non-altool codebase).
     gym(
       project: PROJECT,
       scheme: SCHEME,
       configuration: "Release",
-      skip_package_ipa: true,
+      export_method: "app-store",
       xcargs: "CURRENT_PROJECT_VERSION=#{build}",
-      clean: true
+      output_directory: "build",
+      output_name: "LaiGangTong.ipa",
+      clean: true,
+      export_options: {
+        provisioningProfiles: { APP_ID => profile }
+      }
     )
 
-    archive = lane_context[SharedValues::XCODEBUILD_ARCHIVE]
-    key_path = File.expand_path("~/.appstoreconnect/private_keys/AuthKey_#{key_id}.p8")
-
-    export_options = {
-      method: "app-store",
-      teamID: TEAM_ID,
-      signingStyle: "manual",
-      provisioningProfiles: { APP_ID => profile },
-      destination: "upload"
-    }
-    # Note: sh() runs with cwd = fastlane/, but plain Ruby File/Dir calls run
-    # with cwd = wherever `fastlane` was invoked from (repo root, since CI
-    # runs `bundle exec fastlane beta` there) - matching how gym's own
-    # `output_directory: "build"` above already resolves to repo-root/build.
-    plist_path = File.expand_path("build/ExportOptions.plist")
-    FileUtils.mkdir_p(File.dirname(plist_path))
-    File.write(plist_path, Plist::Emit.dump(export_options))
-
-    # -allowProvisioningUpdates tells xcodebuild to itself manage
-    # provisioning through the API key, which is unnecessary here (match
-    # already installed a valid cert and profile) and, per a similar report
-    # on Apple's developer forums (thread 742458), is exactly the flag
-    # implicated in -authenticationKeyPath failing with account/keychain
-    # state it doesn't expect. Drop it; only the upload needs authenticating.
-    sh(
-      "xcodebuild -exportArchive" \
-      " -archivePath '#{archive}'" \
-      " -exportOptionsPlist '#{plist_path}'" \
-      " -exportPath '#{File.dirname(plist_path)}'" \
-      " -authenticationKeyPath '#{key_path}'" \
-      " -authenticationKeyID #{key_id}" \
-      " -authenticationKeyIssuerID #{issuer_id}"
-    )
+    ipa = lane_context[SharedValues::IPA_OUTPUT_PATH]
+    UI.success("Built #{ipa} (#{File.size(ipa)} bytes) - upload it with Transporter.")
   end
 
   desc "Push metadata and screenshots to App Store Connect, then submit for review"
