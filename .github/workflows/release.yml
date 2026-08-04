@@ -3,18 +3,23 @@ name: App Store
 # Deliberately manual. The TestFlight workflow runs on every push; pushing
 # metadata and submitting for review should always be a decision, never a
 # side effect of a commit.
+#
+# action values:
+#   screenshots_only  - reshoot screenshots, publish as an artifact to review
+#   metadata_only     - push copy and screenshots, do not submit
+#   submit_for_review - push and submit for review
 on:
   workflow_dispatch:
     inputs:
       action:
-        description: '要做什麼'
+        description: 'What to do'
         required: true
         default: screenshots_only
         type: choice
         options:
-          - screenshots_only      # 只重拍截圖，產出 artifact 供人工過目
-          - metadata_only         # 推送文案與截圖，不提交審核
-          - submit_for_review     # 推送並提交審核
+          - screenshots_only
+          - metadata_only
+          - submit_for_review
 
 concurrency:
   group: appstore
@@ -33,6 +38,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: xcodebuild -version
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -55,9 +63,9 @@ jobs:
           path: fastlane/screenshots/zh-Hant/*.png
 
       - name: Push metadata and screenshots
-        if: inputs.action == 'metadata_only'
+        if: github.event.inputs.action == 'metadata_only'
         run: bundle exec fastlane metadata_only
 
       - name: Push metadata and submit for review
-        if: inputs.action == 'submit_for_review'
+        if: github.event.inputs.action == 'submit_for_review'
         run: bundle exec fastlane release
