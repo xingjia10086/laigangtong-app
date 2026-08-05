@@ -44,6 +44,13 @@ grab() {
   sleep 2
   xcrun simctl launch "$SIM" "$BID" "$@" >/dev/null
   sleep 7
+  # A blank screenshot looks the same whether the view failed to render or the
+  # process died, so record which it was rather than guessing from the image.
+  if xcrun simctl spawn "$SIM" launchctl list 2>/dev/null | grep -q "$BID"; then
+    echo "  $name: process alive"
+  else
+    echo "  $name: PROCESS GONE (crashed on launch?)"
+  fi
   xcrun simctl io "$SIM" screenshot "$OUT/$name.png" >/dev/null
   echo "captured $name"
 }
@@ -68,3 +75,7 @@ for p in sorted(out.glob("*.png")):
         im.save(p, "PNG")
     print(f"{p.name}: {im.size} {im.mode}")
 PY
+
+# Surface any crash reports the run produced; simulator crashes land on the host.
+echo "--- crash reports ---"
+ls -1t ~/Library/Logs/DiagnosticReports/ 2>/dev/null | grep -i hknewcomer | head -3 || echo "none"
